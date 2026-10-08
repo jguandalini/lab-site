@@ -1,0 +1,29 @@
+name: deploy-site
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "Dockerfile"
+      - "k8s/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    env:
+      IMAGE: site:${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build da imagem
+        run: docker build -t $IMAGE .
+
+      - name: Carregar imagem no kind
+        run: kind load docker-image $IMAGE --name lab
+
+      - name: Deploy
+        run: |
+          sed "s|IMAGE_PLACEHOLDER|$IMAGE|" k8s/deployment.yaml | kubectl apply -f -
+          kubectl apply -f k8s/service.yaml
+          kubectl rollout status deployment/site --timeout=60s
