@@ -1,5 +1,1547 @@
 <!DOCTYPE html>
-<html>
-<head><title>Meu LAB DevOps</title></head>
-<body><h1>Aplicação Nginx Rodando no Kind =] teste 00001</h1></body>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>DevOps na Prática | Curso de DevOps</title>
+
+  <meta
+    name="description"
+    content="Curso de DevOps com teoria, laboratórios práticos e projetos reais."
+  >
+
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-soft: #0b1728;
+      --card: #0e1d31;
+      --card-hover: #12253d;
+      --primary: #00a8ff;
+      --primary-dark: #0077b6;
+      --accent: #36d399;
+      --text: #f4f8fc;
+      --text-soft: #9eb0c5;
+      --border: rgba(255,255,255,.08);
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background:
+        radial-gradient(circle at 80% 10%, rgba(0,168,255,.13), transparent 30%),
+        radial-gradient(circle at 10% 30%, rgba(0,119,182,.08), transparent 25%),
+        var(--bg);
+
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+
+      background: rgba(7,17,31,.82);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav {
+      height: 72px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 10px;
+
+      background:
+        linear-gradient(135deg, var(--primary), var(--primary-dark));
+
+      box-shadow: 0 8px 25px rgba(0,168,255,.25);
+
+      font-weight: 900;
+    }
+
+    .logo span {
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-soft);
+      font-size: 14px;
+      transition: .2s;
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    .nav-button {
+      padding: 10px 18px;
+
+      border-radius: 9px;
+
+      background: var(--primary);
+      color: #03101b;
+
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      min-height: 680px;
+
+      display: flex;
+      align-items: center;
+
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 70px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      padding: 7px 12px;
+
+      border: 1px solid rgba(0,168,255,.25);
+      border-radius: 100px;
+
+      background: rgba(0,168,255,.08);
+
+      color: #70d0ff;
+      font-size: 13px;
+      font-weight: 700;
+
+      margin-bottom: 24px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+    }
+
+    .hero h1 {
+      font-size: clamp(44px, 6vw, 72px);
+      line-height: 1.02;
+      letter-spacing: -3px;
+      max-width: 720px;
+      margin-bottom: 25px;
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero-description {
+      max-width: 620px;
+
+      color: var(--text-soft);
+      font-size: 18px;
+
+      margin-bottom: 34px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 14px 22px;
+
+      border-radius: 10px;
+
+      font-size: 15px;
+      font-weight: 800;
+
+      transition: .2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #03101b;
+      box-shadow: 0 12px 35px rgba(0,168,255,.2);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 40px rgba(0,168,255,.3);
+    }
+
+    .btn-secondary {
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: rgba(255,255,255,.03);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,.07);
+    }
+
+    /* Terminal */
+
+    .terminal {
+      position: relative;
+
+      background: #050c15;
+
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 16px;
+
+      box-shadow: var(--shadow);
+
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      height: 42px;
+
+      display: flex;
+      align-items: center;
+
+      padding: 0 15px;
+
+      background: #0a1421;
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .terminal-dots i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #536579;
+    }
+
+    .terminal-title {
+      margin-left: auto;
+      margin-right: auto;
+
+      color: #6f8298;
+      font-size: 12px;
+    }
+
+    .terminal-body {
+      padding: 28px;
+
+      font-family:
+        "SFMono-Regular",
+        Consolas,
+        "Liberation Mono",
+        monospace;
+
+      font-size: 14px;
+
+      color: #a9bdd2;
+      min-height: 350px;
+    }
+
+    .terminal-line {
+      margin-bottom: 10px;
+    }
+
+    .terminal-prompt {
+      color: var(--accent);
+    }
+
+    .terminal-command {
+      color: #fff;
+    }
+
+    .terminal-comment {
+      color: #587087;
+    }
+
+    .terminal-success {
+      color: var(--accent);
+    }
+
+    /* =========================
+       STATS
+    ========================= */
+
+    .stats {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+
+      background: rgba(255,255,255,.015);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+    }
+
+    .stat {
+      padding: 28px 20px;
+      text-align: center;
+
+      border-right: 1px solid var(--border);
+    }
+
+    .stat:last-child {
+      border-right: 0;
+    }
+
+    .stat strong {
+      display: block;
+
+      font-size: 27px;
+      color: white;
+    }
+
+    .stat span {
+      color: var(--text-soft);
+      font-size: 13px;
+    }
+
+    /* =========================
+       SECTIONS
+    ========================= */
+
+    section {
+      padding: 100px 0;
+    }
+
+    .section-heading {
+      max-width: 700px;
+      margin-bottom: 50px;
+    }
+
+    .section-label {
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 900;
+
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+
+      margin-bottom: 12px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(32px, 4vw, 48px);
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+
+      margin-bottom: 16px;
+    }
+
+    .section-heading p {
+      color: var(--text-soft);
+      font-size: 16px;
+    }
+
+    /* =========================
+       MODULES
+    ========================= */
+
+    .modules {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 18px;
+    }
+
+    .module {
+      position: relative;
+
+      padding: 28px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.045),
+          rgba(255,255,255,.015)
+        );
+
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+
+      transition: .25s;
+    }
+
+    .module:hover {
+      transform: translateY(-5px);
+      background: var(--card-hover);
+      border-color: rgba(0,168,255,.25);
+    }
+
+    .module-number {
+      color: var(--primary);
+
+      font-size: 13px;
+      font-weight: 900;
+
+      margin-bottom: 25px;
+    }
+
+    .module-icon {
+      width: 46px;
+      height: 46px;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 12px;
+
+      background: rgba(0,168,255,.1);
+
+      font-size: 21px;
+
+      margin-bottom: 18px;
+    }
+
+    .module h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .module p {
+      color: var(--text-soft);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .module-list {
+      list-style: none;
+    }
+
+    .module-list li {
+      color: #b8c7d8;
+      font-size: 13px;
+
+      padding: 6px 0;
+
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+
+    .module-list li::before {
+      content: "✓";
+      color: var(--accent);
+      margin-right: 8px;
+    }
+
+    /* =========================
+       TECHNOLOGIES
+    ========================= */
+
+    .tech-section {
+      background: #091523;
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(5,1fr);
+      gap: 12px;
+    }
+
+    .tech {
+      min-height: 105px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      border: 1px solid var(--border);
+      border-radius: 14px;
+
+      background: rgba(255,255,255,.025);
+
+      transition: .2s;
+    }
+
+    .tech:hover {
+      background: rgba(0,168,255,.07);
+      border-color: rgba(0,168,255,.25);
+    }
+
+    .tech strong {
+      font-size: 15px;
+    }
+
+    .tech small {
+      color: var(--text-soft);
+      font-size: 11px;
+    }
+
+    .tech-symbol {
+      font-size: 25px;
+    }
+
+    /* =========================
+       LAB
+    ========================= */
+
+    .lab {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 70px;
+      align-items: center;
+    }
+
+    .lab-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .lab-item {
+      display: flex;
+      gap: 15px;
+
+      padding: 17px;
+
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      background: rgba(255,255,255,.025);
+    }
+
+    .lab-check {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+
+      display: grid;
+      place-items: center;
+
+      border-radius: 8px;
+
+      background: rgba(54,211,153,.1);
+      color: var(--accent);
+    }
+
+    .lab-item strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 3px;
+    }
+
+    .lab-item span {
+      color: var(--text-soft);
+      font-size: 12px;
+    }
+
+    .architecture {
+      padding: 35px;
+
+      border: 1px solid var(--border);
+      border-radius: 20px;
+
+      background: #050d17;
+
+      box-shadow: var(--shadow);
+    }
+
+    .architecture h3 {
+      margin-bottom: 25px;
+    }
+
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .flow-box {
+      padding: 15px;
+
+      border: 1px solid rgba(0,168,255,.18);
+      border-radius: 10px;
+
+      background: rgba(0,168,255,.05);
+
+      text-align: center;
+
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .flow-arrow {
+      text-align: center;
+      color: var(--primary);
+    }
+
+    /* =========================
+       CTA
+    ========================= */
+
+    .cta {
+      padding: 80px 0;
+    }
+
+    .cta-box {
+      position: relative;
+      overflow: hidden;
+
+      padding: 65px;
+
+      text-align: center;
+
+      border: 1px solid rgba(0,168,255,.2);
+      border-radius: 24px;
+
+      background:
+        radial-gradient(
+          circle at center,
+          rgba(0,168,255,.14),
+          transparent 60%
+        ),
+        #0b1828;
+    }
+
+    .cta-box h2 {
+      font-size: clamp(32px,4vw,48px);
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+
+      margin-bottom: 15px;
+    }
+
+    .cta-box p {
+      color: var(--text-soft);
+      max-width: 600px;
+      margin: 0 auto 28px;
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    footer {
+      padding: 35px 0;
+
+      border-top: 1px solid var(--border);
+
+      color: var(--text-soft);
+      font-size: 13px;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-brand {
+      color: white;
+      font-weight: 800;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 900px) {
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero-grid,
+      .lab {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 70px 0;
+      }
+
+      .modules {
+        grid-template-columns: repeat(2,1fr);
+      }
+
+      .tech-grid {
+        grid-template-columns: repeat(3,1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2,1fr);
+      }
+
+      .stat:nth-child(2) {
+        border-right: 0;
+      }
+
+      .stat:nth-child(-n+2) {
+        border-bottom: 1px solid var(--border);
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .container {
+        width: min(100% - 28px, 1180px);
+      }
+
+      section {
+        padding: 70px 0;
+      }
+
+      .hero h1 {
+        letter-spacing: -2px;
+      }
+
+      .modules {
+        grid-template-columns: 1fr;
+      }
+
+      .tech-grid {
+        grid-template-columns: repeat(2,1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .cta-box {
+        padding: 40px 20px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+
+  <header>
+
+    <div class="container nav">
+
+      <a href="#" class="logo">
+        <div class="logo-mark">D</div>
+        DEV<span>OPS</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#curso">Curso</a>
+        <a href="#modulos">Módulos</a>
+        <a href="#tecnologias">Tecnologias</a>
+        <a href="#laboratorios">Laboratórios</a>
+      </nav>
+
+      <a href="#curso" class="nav-button">
+        Começar
+      </a>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       HERO
+  ========================== -->
+
+  <main>
+
+    <section class="hero">
+
+      <div class="container hero-grid">
+
+        <div>
+
+          <div class="badge">
+            <span class="badge-dot"></span>
+            APRENDIZADO PRÁTICO
+          </div>
+
+          <h1>
+            Aprenda DevOps
+            <span>fazendo.</span>
+          </h1>
+
+          <p class="hero-description">
+            Uma jornada prática pelos principais conceitos, ferramentas
+            e práticas de DevOps. Menos teoria isolada. Mais laboratório,
+            automação e sistemas funcionando de verdade.
+          </p>
+
+          <div class="hero-buttons">
+
+            <a href="#modulos" class="btn btn-primary">
+              Explorar o curso →
+            </a>
+
+            <a href="#laboratorios" class="btn btn-secondary">
+              Ver laboratórios
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <div class="terminal">
+
+          <div class="terminal-header">
+
+            <div class="terminal-dots">
+              <i></i>
+              <i></i>
+              <i></i>
+            </div>
+
+            <div class="terminal-title">
+              devops-lab
+            </div>
+
+          </div>
+
+          <div class="terminal-body">
+
+            <div class="terminal-line">
+              <span class="terminal-prompt">$</span>
+              <span class="terminal-command">
+                kubectl get pods
+              </span>
+            </div>
+
+            <div class="terminal-line">
+              NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              READY&nbsp;&nbsp;&nbsp;STATUS
+            </div>
+
+            <div class="terminal-line">
+              nginx-app&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              1/1&nbsp;&nbsp;&nbsp;&nbsp;Running
+            </div>
+
+            <br>
+
+            <div class="terminal-line">
+              <span class="terminal-prompt">$</span>
+              <span class="terminal-command">
+                git push origin main
+              </span>
+            </div>
+
+            <div class="terminal-line terminal-comment">
+              → Trigger received
+            </div>
+
+            <div class="terminal-line terminal-comment">
+              → Pipeline started
+            </div>
+
+            <div class="terminal-line terminal-comment">
+              → Tests executed
+            </div>
+
+            <div class="terminal-line terminal-comment">
+              → Deployment completed
+            </div>
+
+            <br>
+
+            <div class="terminal-line terminal-success">
+              ✓ Deployment successful
+            </div>
+
+            <div class="terminal-line terminal-comment">
+              Application available.
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         STATS
+    ========================== -->
+
+    <div class="stats">
+
+      <div class="container stats-grid">
+
+        <div class="stat">
+          <strong>100%</strong>
+          <span>prático</span>
+        </div>
+
+        <div class="stat">
+          <strong>Linux</strong>
+          <span>ambiente de laboratório</span>
+        </div>
+
+        <div class="stat">
+          <strong>CI/CD</strong>
+          <span>automação de entrega</span>
+        </div>
+
+        <div class="stat">
+          <strong>Cloud</strong>
+          <span>conceitos modernos</span>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         CURSO
+    ========================== -->
+
+    <section id="curso">
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="section-label">
+            A jornada
+          </div>
+
+          <h2>
+            Do conceito ao ambiente funcionando.
+          </h2>
+
+          <p>
+            O objetivo não é decorar comandos. É entender como as peças
+            se conectam e conseguir construir, automatizar, observar e
+            evoluir ambientes modernos.
+          </p>
+
+        </div>
+
+
+        <div class="modules" id="modulos">
+
+          <!-- MODULE 01 -->
+
+          <article class="module">
+
+            <div class="module-number">
+              01 / FUNDAMENTOS
+            </div>
+
+            <div class="module-icon">
+              ◈
+            </div>
+
+            <h3>
+              DevOps
+            </h3>
+
+            <p>
+              Entenda cultura, colaboração, automação e o ciclo de vida
+              de uma aplicação.
+            </p>
+
+            <ul class="module-list">
+              <li>DevOps x DevSecOps</li>
+              <li>SDLC</li>
+              <li>CI/CD</li>
+              <li>Infrastructure as Code</li>
+            </ul>
+
+          </article>
+
+
+          <!-- MODULE 02 -->
+
+          <article class="module">
+
+            <div class="module-number">
+              02 / LINUX
+            </div>
+
+            <div class="module-icon">
+              $
+            </div>
+
+            <h3>
+              Linux & Shell
+            </h3>
+
+            <p>
+              A base para trabalhar com servidores, containers,
+              automação e ambientes cloud.
+            </p>
+
+            <ul class="module-list">
+              <li>Terminal</li>
+              <li>Processos</li>
+              <li>Networking</li>
+              <li>Shell Script</li>
+            </ul>
+
+          </article>
+
+
+          <!-- MODULE 03 -->
+
+          <article class="module">
+
+            <div class="module-number">
+              03 / GIT
+            </div>
+
+            <div class="module-icon">
+              ⎇
+            </div>
+
+            <h3>
+              Git & GitHub
+            </h3>
+
+            <p>
+              Controle de versão e colaboração como base do fluxo
+              moderno de desenvolvimento.
+            </p>
+
+            <ul class="module-list">
+              <li>Repositories</li>
+              <li>Branches</li>
+              <li>Pull Requests</li>
+              <li>Workflows</li>
+            </ul>
+
+          </article>
+
+
+          <!-- MODULE 04 -->
+
+          <article class="module">
+
+            <div class="module-number">
+              04 / CONTAINERS
+            </div>
+
+            <div class="module-icon">
+              ◫
+            </div>
+
+            <h3>
+              Docker
+            </h3>
+
+            <p>
+              Empacote aplicações de forma consistente e entenda
+              como containers funcionam.
+            </p>
+
+            <ul class="module-list">
+              <li>Images</li>
+              <li>Containers</li>
+              <li>Volumes</li>
+              <li>Networks</li>
+            </ul>
+
+          </article>
+
+
+          <!-- MODULE 05 -->
+
+          <article class="module">
+
+            <div class="module-number">
+              05 / KUBERNETES
+            </div>
+
+            <div class="module-icon">
+              ⎈
+            </div>
+
+            <h3>
+              Kubernetes
+            </h3>
+
+            <p>
+              Execute e gerencie aplicações containerizadas em
+              ambientes orquestrados.
+            </p>
+
+            <ul class="module-list">
+              <li>Pods</li>
+              <li>Deployments</li>
+              <li>Services</li>
+              <li>Ingress</li>
+            </ul>
+
+          </article>
+
+
+          <!-- MODULE 06 -->
+
+          <article class="module">
+
+            <div class="module-number">
+              06 / CI/CD
+            </div>
+
+            <div class="module-icon">
+              ⇄
+            </div>
+
+            <h3>
+              Pipelines
+            </h3>
+
+            <p>
+              Transforme um commit em uma entrega automatizada
+              utilizando pipelines.
+            </p>
+
+            <ul class="module-list">
+              <li>CI</li>
+              <li>CD</li>
+              <li>Tekton</li>
+              <li>Automação</li>
+            </ul>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         TECNOLOGIAS
+    ========================== -->
+
+    <section class="tech-section" id="tecnologias">
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="section-label">
+            Stack
+          </div>
+
+          <h2>
+            Tecnologias que fazem parte da jornada.
+          </h2>
+
+          <p>
+            A ideia é conhecer as ferramentas dentro de um contexto,
+            entendendo quando e por que utilizá-las.
+          </p>
+
+        </div>
+
+
+        <div class="tech-grid">
+
+          <div class="tech">
+            <div class="tech-symbol">🐧</div>
+            <strong>Linux</strong>
+            <small>Operating System</small>
+          </div>
+
+          <div class="tech">
+            <div class="tech-symbol">⎇</div>
+            <strong>Git</strong>
+            <small>Version Control</small>
+          </div>
+
+          <div class="tech">
+            <div class="tech-symbol">◫</div>
+            <strong>Docker</strong>
+            <small>Containers</small>
+          </div>
+
+          <div class="tech">
+            <div class="tech-symbol">⎈</div>
+            <strong>Kubernetes</strong>
+            <small>Orchestration</small>
+          </div>
+
+          <div class="tech">
+            <div class="tech-symbol">⇄</div>
+            <strong>Tekton</strong>
+            <small>CI/CD</small>
+          </div>
+
+          <div class="tech">
+            <div class="tech-symbol">☁</div>
+            <strong>Cloud</strong>
+            <small>AWS / Azure</small>
+          </div>
+
+          <div class="tech">
+            <div class="tech-symbol">⌘</div>
+            <strong>Terraform</strong>
+            <small>IaC</small>
+          </div>
+
+          <div class="tech">
+            <div class="tech-symbol">◉</div>
+            <strong>Prometheus</strong>
+            <small>Monitoring</small>
+          </div>
+
+          <div class="tech">
+            <div class="tech-symbol">◈</div>
+            <strong>Grafana</strong>
+            <small>Observability</small>
+          </div>
+
+          <div class="tech">
+            <div class="tech-symbol">⚙</div>
+            <strong>Automation</strong>
+            <small>Engineering</small>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         LABORATÓRIOS
+    ========================== -->
+
+    <section id="laboratorios">
+
+      <div class="container lab">
+
+        <div>
+
+          <div class="section-heading">
+
+            <div class="section-label">
+              Hands-on
+            </div>
+
+            <h2>
+              Aprenda construindo.
+            </h2>
+
+            <p>
+              Cada conceito importante deve levar a algum tipo de
+              experiência prática. A satisfação vem de ver o ambiente
+              funcionando.
+            </p>
+
+          </div>
+
+
+          <div class="lab-list">
+
+            <div class="lab-item">
+
+              <div class="lab-check">✓</div>
+
+              <div>
+                <strong>Crie seu primeiro ambiente Linux</strong>
+                <span>
+                  Configure servidores e pratique comandos essenciais.
+                </span>
+              </div>
+
+            </div>
+
+
+            <div class="lab-item">
+
+              <div class="lab-check">✓</div>
+
+              <div>
+                <strong>Containerize uma aplicação</strong>
+                <span>
+                  Crie e execute uma aplicação utilizando Docker.
+                </span>
+              </div>
+
+            </div>
+
+
+            <div class="lab-item">
+
+              <div class="lab-check">✓</div>
+
+              <div>
+                <strong>Execute Kubernetes localmente</strong>
+                <span>
+                  Suba aplicações utilizando um cluster local.
+                </span>
+              </div>
+
+            </div>
+
+
+            <div class="lab-item">
+
+              <div class="lab-check">✓</div>
+
+              <div>
+                <strong>Construa um pipeline CI/CD</strong>
+                <span>
+                  Um commit dispara automaticamente o processo.
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="architecture">
+
+          <h3>
+            Exemplo de fluxo
+          </h3>
+
+          <div class="flow">
+
+            <div class="flow-box">
+              Developer
+            </div>
+
+            <div class="flow-arrow">
+              ↓
+            </div>
+
+            <div class="flow-box">
+              GitHub
+            </div>
+
+            <div class="flow-arrow">
+              ↓
+            </div>
+
+            <div class="flow-box">
+              Tekton Trigger
+            </div>
+
+            <div class="flow-arrow">
+              ↓
+            </div>
+
+            <div class="flow-box">
+              CI/CD Pipeline
+            </div>
+
+            <div class="flow-arrow">
+              ↓
+            </div>
+
+            <div class="flow-box">
+              Kubernetes
+            </div>
+
+            <div class="flow-arrow">
+              ↓
+            </div>
+
+            <div class="flow-box">
+              Application
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         CTA
+    ========================== -->
+
+    <section class="cta">
+
+      <div class="container">
+
+        <div class="cta-box">
+
+          <div class="section-label">
+            Próximo passo
+          </div>
+
+          <h2>
+            Pare de apenas estudar DevOps.
+          </h2>
+
+          <p>
+            Monte os ambientes, execute os comandos, quebre as coisas,
+            descubra por que quebraram e faça funcionar novamente.
+          </p>
+
+          <a href="#modulos" class="btn btn-primary">
+            Começar a jornada →
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
+  <footer>
+
+    <div class="container footer-content">
+
+      <div>
+        <span class="footer-brand">DevOps na Prática</span>
+        <br>
+        Aprendizado baseado em laboratório.
+      </div>
+
+      <div>
+        © 2026 · IceNex
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <script>
+
+    // Pequena interação para destacar o item
+    // do menu conforme a navegação.
+
+    const sections = document.querySelectorAll("section[id]");
+    const navLinks = document.querySelectorAll(".nav-links a");
+
+    window.addEventListener("scroll", () => {
+
+      let current = "";
+
+      sections.forEach(section => {
+
+        const sectionTop = section.offsetTop - 120;
+
+        if (window.scrollY >= sectionTop) {
+          current = section.getAttribute("id");
+        }
+
+      });
+
+      navLinks.forEach(link => {
+
+        link.style.color = "";
+
+        if (link.getAttribute("href") === "#" + current) {
+          link.style.color = "#00a8ff";
+        }
+
+      });
+
+    });
+
+  </script>
+
+</body>
 </html>
