@@ -1,0 +1,12 @@
+name: smoke-test
+on: [push, workflow_dispatch]
+
+jobs:
+  check:
+    runs-on: self-hosted
+    steps:
+      - run: |
+          whoami
+          docker version --format '{{.Server.Version}}'
+          kind get clusters
+          kubectl get nodes
