@@ -20,7 +20,7 @@ jobs:
         run: docker build -t $IMAGE .
 
       - name: Carregar imagem no kind
-        run: kind load docker-image $IMAGE --name lab
+        run: kind load docker-image $IMAGE --name k8s-local 
 
       - name: Deploy
         run: |
